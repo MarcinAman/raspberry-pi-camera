@@ -1,16 +1,18 @@
+import sys, getopt
+
 import numpy as np
 import cv2
 from VideoRecorder import VideoRecorder
 from FaceDetection import FaceDetection
+from BackgroundFiltering import BackgroundFiltering
 
 
-def main():
+def process_image(processing_object):
     video_recorder = VideoRecorder()
-    face_detection = FaceDetection()
 
     while True:
         frame = next(video_recorder.get_frame())
-        cv2.imshow('frame', face_detection.detect(frame))
+        cv2.imshow('frame', processing_object.detect(frame))
 
         if cv2.waitKey(1) % 0xFF == ord('q'):
             break
@@ -18,5 +20,18 @@ def main():
     video_recorder.stop()
 
 
+def parse_command_line(argv):
+    mode = argv[0].strip()
+
+    print('Initialized with mode: ' + mode)
+
+    if mode == 'face-detection':
+        return FaceDetection()
+    if mode == 'background-filter':
+        return BackgroundFiltering()
+
+    raise RuntimeError('Mode not recognised!')
+
+
 if __name__ == "__main__":
-    main()
+    process_image(parse_command_line(sys.argv[1:]))

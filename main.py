@@ -5,6 +5,8 @@ import cv2
 from VideoRecorder import VideoRecorder
 from FaceDetection import FaceDetection
 from BackgroundFiltering import BackgroundFiltering
+from NoneFilter import NoneFilter
+from Smoothing import Smoothing
 
 
 def process_image(processing_object):
@@ -29,6 +31,10 @@ def parse_command_line(argv):
         return FaceDetection()
     if mode == 'background-filter':
         return BackgroundFiltering()
+    if mode == 'smoothing':
+        return Smoothing()
+    if mode == 'none':
+        return NoneFilter()
 
     raise RuntimeError('Mode not recognised!')
 

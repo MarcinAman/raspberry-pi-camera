@@ -1,7 +1,9 @@
-import sys, getopt
+import sys
 
 import numpy as np
 import cv2
+
+from SobelDetection import SobelDetection
 from VideoRecorder import VideoRecorder
 from FaceDetection import FaceDetection
 from BackgroundFiltering import BackgroundFiltering
@@ -29,6 +31,8 @@ def parse_command_line(argv):
 
     if mode == 'face-detection':
         return FaceDetection()
+    if mode == 'sobel':
+        return SobelDetection()
     if mode == 'background-filter':
         return BackgroundFiltering()
     if mode == 'smoothing':

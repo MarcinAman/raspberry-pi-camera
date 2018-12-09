@@ -21,3 +21,14 @@ You can also just install opencv via pip: `pip install opencv-python` but i havn
 `laplacian` - application of laplacian operator.
 
 `none` - no filter. Simple offline skype for those who are antisocial or narcissistic
+
+### Running with remote server
+Raspberry Pi is so awesome, that we didn't want to process images on it. So we made a simple server. All you need is a PC (Server).
+
+Firstly you start your client (Raspberry pi):
+`python3 client.py`
+
+On PC you run:
+`python server.py <mode>`
+
+If connection was established you should see it in client's terminal. Then simply type a letter and everything is running!

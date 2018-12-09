@@ -13,8 +13,7 @@ class SobelDetection:
         gray = cv.cvtColor(src, cv.COLOR_BGR2GRAY)
 
         grad_x = cv.Sobel(gray, self.ddepth, 1, 0, ksize=3, scale=self.scale, delta=self.delta, borderType=cv.BORDER_DEFAULT)
-        # Gradient-Y
-        # grad_y = cv.Scharr(gray,ddepth,0,1)
+
         grad_y = cv.Sobel(gray, self.ddepth, 0, 1, ksize=3, scale=self.scale, delta=self.delta, borderType=cv.BORDER_DEFAULT)
 
         abs_grad_x = cv.convertScaleAbs(grad_x)

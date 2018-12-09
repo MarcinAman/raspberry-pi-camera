@@ -10,6 +10,7 @@ from BackgroundFiltering import BackgroundFiltering
 from NoneFilter import NoneFilter
 from Smoothing import Smoothing
 from LaplacianOperator import LaplacianOperator
+from FaceAndEyesDetection import FaceAndEyesDetection
 
 
 def process_image(processing_object):
@@ -42,6 +43,8 @@ def parse_command_line(argv):
         return NoneFilter()
     if mode == 'laplacian':
         return LaplacianOperator()
+    if mode == 'eyes-face-detection':
+        return FaceAndEyesDetection()
 
     raise RuntimeError('Mode not recognised!')
 

@@ -10,6 +10,8 @@ You can also just install opencv via pip: `pip install opencv-python` but i havn
 ### Available modes
 `face-detection` - simple face detection, that draws colorful rectangle around your pretty face
 
+`eyes-face-detection` - name is self-descriptive 
+
 `background-filter` - function works as some sort of disabled green screen by simply marking the edges white and everything else as black
 
 `sobel` - application of sobel operator on every frame. Looks pretty nice

@@ -44,7 +44,8 @@ def streamCamera(host):
 
 def displayer():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.bind(("192.168.0.116", 4000))
+        client_ip = input("client ip: ") 
+        s.bind((client_ip, 4000))
         s.listen()
         conn, addr = s.accept()
         with conn:
@@ -63,8 +64,8 @@ disp = Process(target=displayer, args=())
 disp.start()
 
 host = input("DONE? \n")
-
-cam = Process(target=streamCamera, args=("192.168.0.167",))
+server_ip = input("Server ip: ")
+cam = Process(target=streamCamera, args=(server_ip,))
 cam.start()
 
 

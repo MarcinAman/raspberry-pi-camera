@@ -1,6 +1,5 @@
 import sys
 
-import numpy as np
 import cv2
 
 from SobelDetection import SobelDetection
@@ -11,6 +10,7 @@ from NoneFilter import NoneFilter
 from Smoothing import Smoothing
 from LaplacianOperator import LaplacianOperator
 from FaceAndEyesDetection import FaceAndEyesDetection
+import GUI
 
 
 def process_image(processing_object):
@@ -18,6 +18,7 @@ def process_image(processing_object):
 
     while True:
         frame = next(video_recorder.get_frame())
+        print(str(frame.__class__.__name__))
         cv2.imshow('frame', processing_object.detect(frame))
 
         if cv2.waitKey(1) % 0xFF == ord('q'):
@@ -50,4 +51,12 @@ def parse_command_line(argv):
 
 
 if __name__ == "__main__":
-    process_image(parse_command_line(sys.argv[1:]))
+    app = GUI.Application(NoneFilter())
+    buttons = [('Face detection', FaceDetection()), ('Face and eyes detection', FaceAndEyesDetection()),
+               ('Sobel', SobelDetection()), ('Smoothing', Smoothing()), ('Laplacian', LaplacianOperator()),
+               ('Background filter', BackgroundFiltering())]
+    app.init_buttons(button_with_rendering_object=buttons)
+    cv2.imwrite()
+    app.render_image(next(GUI.get_frame()))
+    app.mainloop()
+    # process_image(parse_command_line(sys.argv[1:]))

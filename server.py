@@ -71,7 +71,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         client_ip = input("Client ip: ")
         s2.connect((client_ip, 4000))
         server_ip = input("Server ip: ")
-        s.bind((server_ip, 5000))
+        s.bind((server_ip, 6000))
         s.listen()
         conn, addr = s.accept()
         mapping = parse_command_line(sys.argv[1:])

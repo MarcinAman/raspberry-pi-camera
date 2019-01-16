@@ -42,9 +42,8 @@ def streamCamera(host):
             send_msg(s, img_str)
     cap.release()
 
-def displayer():
+def displayer(client_ip):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        client_ip = input("client ip: ") 
         s.bind((client_ip, 4000))
         s.listen()
         conn, addr = s.accept()
@@ -59,14 +58,14 @@ def displayer():
                     break
     cv2.destroyAllWindows()         
 
+def main():
+    client_ip = input("client ip:")
+    server_ip = input("server ip:")
+    disp = Process(target=displayer, args=(client_ip.strip(),))
+    disp.start()
 
-disp = Process(target=displayer, args=())
-disp.start()
+    host = input("DONE? \n")
+    cam = Process(target=streamCamera, args=(server_ip.strip(),))
+    cam.start()
 
-host = input("DONE? \n")
-server_ip = input("Server ip: ")
-cam = Process(target=streamCamera, args=(server_ip,))
-cam.start()
-
-
-
+main()

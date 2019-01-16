@@ -5,6 +5,8 @@ import numpy as np
 import cv2
 import struct
 
+from Constaint import SERVER_IP, CLIENT_IP
+
 
 def send_msg(sock, msg):
     # Prefix each message with a 4-byte length (network byte order)
@@ -37,10 +39,8 @@ def recvall(sock, n):
 def map_with_remote_frames(mapping):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s2:
-            client_ip = input("Client ip: ")
-            s2.connect((client_ip, 4000))
-            server_ip = input("Server ip: ")
-            s.bind((server_ip, 5000))
+            s2.connect((CLIENT_IP, 4000))
+            s.bind((SERVER_IP, 5000))
             s.listen()
             conn, addr = s.accept()
             with conn:
@@ -57,3 +57,38 @@ def map_with_remote_frames(mapping):
 
                     img_str = cv2.imencode('.jpg', imagem)[1].tostring()
                     send_msg(s2, img_str)
+
+
+def parse_command_line(argv):
+    mode = argv[0].strip()
+
+    print('Initialized with mode: ' + mode)
+
+    if mode == 'face-detection':
+        from FaceDetection import FaceDetection
+        return FaceDetection()
+    if mode == 'sobel':
+        from SobelDetection import SobelDetection
+        return SobelDetection()
+    if mode == 'background-filter':
+        from BackgroundFiltering import BackgroundFiltering
+        return BackgroundFiltering()
+    if mode == 'smoothing':
+        from Smoothing import Smoothing
+        return Smoothing()
+    if mode == 'none':
+        from NoneFilter import NoneFilter
+        return NoneFilter()
+    if mode == 'laplacian':
+        from LaplacianOperator import LaplacianOperator
+        return LaplacianOperator()
+    if mode == 'eyes-face-detection':
+        from FaceAndEyesDetection import FaceAndEyesDetection
+        return FaceAndEyesDetection()
+
+    raise RuntimeError('Mode not recognised!')
+
+
+if __name__ == "__main__":
+    mode = parse_command_line(sys.argv[1:])
+    map_with_remote_frames(mode)

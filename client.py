@@ -51,7 +51,6 @@ def displayer(client_ip):
         s.listen()
         conn, addr = s.accept()
         with conn:
-            print('Connected by', addr)
             while True:
                 data = recv_msg(conn)
                 nparr = np.fromstring(data, np.uint8)

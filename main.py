@@ -78,7 +78,9 @@ def video_background_filter():
 
 @app.route('/remote/')
 def video_feed_remote():
-    return Response(process_image(NoneFilter(), VideoRecorder()),
+    from client import init
+
+    return Response(init(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
 

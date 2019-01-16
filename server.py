@@ -40,7 +40,7 @@ def map_with_remote_frames(mapping):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s2:
             s2.connect((CLIENT_IP, 4000))
-            s.bind((SERVER_IP, 5000))
+            s.bind((SERVER_IP, 3000))
             s.listen()
             conn, addr = s.accept()
             with conn:

@@ -37,7 +37,7 @@ def recvall(sock, n):
 def streamCamera(host):
     cap = cv2.VideoCapture(0)
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.connect((host, 5000))
+        s.connect((host, 3000))
         while cap.isOpened():
             ret, frame = cap.read()
             cv2.imshow('frame', frame)

@@ -45,15 +45,8 @@ def streamCamera(host):
             send_msg(s, img_str)
     cap.release()
 
-<<<<<<< HEAD
 def displayer(client_ip):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-=======
-
-def displayer():
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        client_ip = input("client ip: ")
->>>>>>> gui
         s.bind((client_ip, 4000))
         s.listen()
         conn, addr = s.accept()
@@ -74,18 +67,8 @@ def main():
     disp = Process(target=displayer, args=(client_ip.strip(),))
     disp.start()
 
-<<<<<<< HEAD
     host = input("DONE? \n")
     cam = Process(target=streamCamera, args=(server_ip.strip(),))
     cam.start()
 
 main()
-=======
-disp = Process(target=displayer, args=())
-disp.start()
-
-host = input("DONE? \n")
-server_ip = input("Server ip: ")
-cam = Process(target=streamCamera, args=(server_ip,))
-cam.start()
->>>>>>> gui

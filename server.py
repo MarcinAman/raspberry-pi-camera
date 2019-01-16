@@ -4,13 +4,7 @@ import sys
 import numpy as np
 import cv2
 import struct
-import cmd
-import time
 
-from main import parse_command_line
-
-
-# sudo QT_X11_NO_MITSHM=1 python3 ./server.py
 
 def send_msg(sock, msg):
     # Prefix each message with a 4-byte length (network byte order)
@@ -40,26 +34,26 @@ def recvall(sock, n):
     return data
 
 
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s2:
-        client_ip = input("Client ip: ")
-        s2.connect((client_ip, 4000))
-        server_ip = input("Server ip: ")
-        s.bind((server_ip, 5000))
-        s.listen()
-        conn, addr = s.accept()
-        mapping = parse_command_line(sys.argv[1:])
-        with conn:
-            print('Connected by', addr)
-            while True:
-                data = recv_msg(conn)
-                nparr = np.fromstring(data, np.uint8)
-                img = cv2.imdecode(nparr, 1)
+def map_with_remote_frames(mapping):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s2:
+            client_ip = input("Client ip: ")
+            s2.connect((client_ip, 4000))
+            server_ip = input("Server ip: ")
+            s.bind((server_ip, 5000))
+            s.listen()
+            conn, addr = s.accept()
+            with conn:
+                print('Connected by', addr)
+                while True:
+                    data = recv_msg(conn)
+                    nparr = np.fromstring(data, np.uint8)
+                    img = cv2.imdecode(nparr, 1)
 
-                # ---- Do stuff with img
-                # imagem = cv2.bitwise_not(img)
-                imagem = mapping.detect(img)
-                # ----
+                    # ---- Do stuff with img
+                    # imagem = cv2.bitwise_not(img)
+                    imagem = mapping.detect(img)
+                    # ----
 
-                img_str = cv2.imencode('.jpg', imagem)[1].tostring()
-                send_msg(s2, img_str)
+                    img_str = cv2.imencode('.jpg', imagem)[1].tostring()
+                    send_msg(s2, img_str)

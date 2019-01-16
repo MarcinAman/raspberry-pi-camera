@@ -7,10 +7,6 @@ import struct
 import cmd
 import time
 
-from main import parse_command_line
-
-
-# sudo QT_X11_NO_MITSHM=1 python3 ./server.py
 
 def send_msg(sock, msg):
     # Prefix each message with a 4-byte length (network byte order)
@@ -40,12 +36,42 @@ def recvall(sock, n):
     return data
 
 
+def parse_command_line(argv):
+    mode = argv[0].strip()
+
+    print('Initialized with mode: ' + mode)
+
+    if mode == 'face-detection':
+        from FaceDetection import FaceDetection
+        return FaceDetection()
+    if mode == 'sobel':
+        from SobelDetection import SobelDetection
+        return SobelDetection()
+    if mode == 'background-filter':
+        from BackgroundFiltering import BackgroundFiltering
+        return BackgroundFiltering()
+    if mode == 'smoothing':
+        from Smoothing import Smoothing
+        return Smoothing()
+    if mode == 'none':
+        from NoneFilter import NoneFilter
+        return NoneFilter()
+    if mode == 'laplacian':
+        from LaplacianOperator import LaplacianOperator
+        return LaplacianOperator()
+    if mode == 'eyes-face-detection':
+        from FaceAndEyesDetection import FaceAndEyesDetection
+        return FaceAndEyesDetection()
+
+    raise RuntimeError('Mode not recognised!')
+
+
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s2:
         client_ip = input("Client ip: ")
         s2.connect((client_ip, 4000))
         server_ip = input("Server ip: ")
-        s.bind((server_ip, 5000))
+        s.bind((server_ip, 6000))
         s.listen()
         conn, addr = s.accept()
         mapping = parse_command_line(sys.argv[1:])

@@ -12,6 +12,7 @@ def send_msg(sock, msg):
     msg = struct.pack('>I', len(msg)) + msg
     sock.sendall(msg)
 
+
 def recv_msg(sock):
     # Read message length and unpack it into an integer
     raw_msglen = recvall(sock, 4)
@@ -20,6 +21,7 @@ def recv_msg(sock):
     msglen = struct.unpack('>I', raw_msglen)[0]
     # Read the message data
     return recvall(sock, msglen)
+
 
 def recvall(sock, n):
     # Helper function to recv n bytes or return None if EOF is hit
@@ -31,11 +33,12 @@ def recvall(sock, n):
         data += packet
     return data
 
+
 def streamCamera(host):
     cap = cv2.VideoCapture(0)
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.connect((host, 5000))
-        while(cap.isOpened()):
+        s.connect((host, 6000))
+        while cap.isOpened():
             ret, frame = cap.read()
             cv2.imshow('frame', frame)
             img_str = cv2.imencode('.jpg', frame)[1].tostring()
@@ -53,10 +56,10 @@ def displayer(client_ip):
                 data = recv_msg(conn)
                 nparr = np.fromstring(data, np.uint8)
                 img = cv2.imdecode(nparr, 1)
-                cv2.imshow('image',img)
+                cv2.imshow('image', img)
                 if cv2.waitKey(1) % 0xFF == ord('q'):
                     break
-    cv2.destroyAllWindows()         
+    cv2.destroyAllWindows()
 
 def main():
     client_ip = input("client ip:")

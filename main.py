@@ -1,53 +1,79 @@
-import sys
-
-import numpy as np
-import cv2
-
-from SobelDetection import SobelDetection
-from VideoRecorder import VideoRecorder
-from FaceDetection import FaceDetection
-from BackgroundFiltering import BackgroundFiltering
 from NoneFilter import NoneFilter
+from VideoRecorder import VideoRecorder
+from SobelDetection import SobelDetection
 from Smoothing import Smoothing
 from LaplacianOperator import LaplacianOperator
 from FaceAndEyesDetection import FaceAndEyesDetection
+from FaceDetection import FaceDetection
+from BackgroundFiltering import BackgroundFiltering
+import cv2
+
+from flask import Flask, render_template, Response
+
+app = Flask(__name__)
 
 
-def process_image(processing_object):
-    video_recorder = VideoRecorder()
+def process_image(processing_object, video_recorder):
+    while True:
+        frame = next(get_frame(video_recorder))
+        processed = processing_object.detect(frame)
+        encoded = cv2.imencode('.jpg', processed)[1].tobytes()
 
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + encoded + b'\r\n')
+
+
+def get_frame(video_recorder):
     while True:
         frame = next(video_recorder.get_frame())
-        cv2.imshow('frame', processing_object.detect(frame))
-
-        if cv2.waitKey(1) % 0xFF == ord('q'):
-            break
-
-    video_recorder.stop()
+        yield frame
 
 
-def parse_command_line(argv):
-    mode = argv[0].strip()
-
-    print('Initialized with mode: ' + mode)
-
-    if mode == 'face-detection':
-        return FaceDetection()
-    if mode == 'sobel':
-        return SobelDetection()
-    if mode == 'background-filter':
-        return BackgroundFiltering()
-    if mode == 'smoothing':
-        return Smoothing()
-    if mode == 'none':
-        return NoneFilter()
-    if mode == 'laplacian':
-        return LaplacianOperator()
-    if mode == 'eyes-face-detection':
-        return FaceAndEyesDetection()
-
-    raise RuntimeError('Mode not recognised!')
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 
-if __name__ == "__main__":
-    process_image(parse_command_line(sys.argv[1:]))
+@app.route('/video_feed/')
+def video_feed():
+    return Response(process_image(NoneFilter(), VideoRecorder()),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
+
+
+@app.route('/sobel/')
+def video_feed_sobel():
+    return Response(process_image(SobelDetection(), VideoRecorder()),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
+
+
+@app.route('/smoothing/')
+def video_feed_smoothing():
+    return Response(process_image(Smoothing(), VideoRecorder()),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
+
+
+@app.route('/laplacian/')
+def video_feed_laplacian():
+    return Response(process_image(LaplacianOperator(), VideoRecorder()),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
+
+
+@app.route('/face-detection/')
+def video_feed_face_detection():
+    return Response(process_image(FaceDetection(), VideoRecorder()),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
+
+
+@app.route('/face-eyes-detection/')
+def video_feed_face_eyes_detection():
+    return Response(process_image(FaceAndEyesDetection(), VideoRecorder()),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
+
+
+@app.route('/background-filter/')
+def video_background_filter():
+    return Response(process_image(BackgroundFiltering(), VideoRecorder()),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', threaded=True)
